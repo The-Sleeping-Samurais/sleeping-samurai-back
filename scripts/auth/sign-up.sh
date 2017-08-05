@@ -2,7 +2,7 @@
 
 API="http://localhost:4741"
 URL_PATH="/sign-up"
-EMAIL='muda'
+EMAIL='1'
 PASSWORD='bish'
 curl "${API}${URL_PATH}" \
   --include \
