@@ -7,6 +7,7 @@ const uploadSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  // location of the hosted file
   url: {
     type: String,
     required: true
@@ -15,6 +16,8 @@ const uploadSchema = new mongoose.Schema({
   timestamps: true
 })
 
+// constructor function for creating uploads
+// uses uploadSchema as its schema
 const Upload = mongoose.model('Upload', uploadSchema)
 
 module.exports = Upload

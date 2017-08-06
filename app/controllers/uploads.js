@@ -1,44 +1,67 @@
 'use strict'
 
+// requiring the wiring for the controller
 const controller = require('lib/wiring/controller')
+// requiring the models to build/upload object
 const models = require('app/models')
+
+// choosing the upload schema
 const Upload = models.upload
+// requiring multer, which will help turn images and files into strings
 const multer = require('multer')
+
+// the function that turns image into string
 const multerUpload = multer({dest: 'tmp/'})
+
+// requiring the AWS module that we built that uploads files to AWS
 const AWSUpload = require('lib/s3-uploads.js')
-// const authenticate = require('./concerns/authenticate')
-// const setUser = require('./concerns/set-current-user')
+
+// requires token for authentication
+const authenticate = require('./concerns/authenticate')
+
+// setting the current user to authenticate
+const setUser = require('./concerns/set-current-user')
+
+// pulls in mongoose
 const setModel = require('./concerns/set-mongoose-model')
 
+// function to find all uploads
 const index = (req, res, next) => {
   Upload.find()
     .then(uploads => res.json({
       uploads: uploads.map((e) =>
+      // turn each upload object into JSON, with virtuals and owner
         e.toJSON({ virtuals: true, user: req.user }))
     }))
     .catch(next)
 }
 
+// function to show one upload
 const show = (req, res) => {
   res.json({
     upload: req.upload.toJSON({ virtuals: true, user: req.user })
   })
 }
 
+// creates a new JSON object out of a file we uploaded to AWS
 const create = (req, res, next) => {
+  // the values that an upload MUST have
   const upload = {
     file: req.file.path,
     name: req.body.image.title
   }
+  // calling the AWSUpload function to upload file... also stores in MongoDB
   AWSUpload(upload)
     .then(upload =>
       res.status(201)
+      // sends response data of the upload back
         .json({
           upload: upload.toJSON()
         }))
     .catch(next)
 }
 
+// Updates JSON object
 const update = (req, res, next) => {
   delete req.body._owner  // disallow owner reassignment.
   req.upload.update(req.body.upload)
@@ -46,6 +69,7 @@ const update = (req, res, next) => {
     .catch(next)
 }
 
+// Removes JSON object
 const destroy = (req, res, next) => {
   req.upload.remove()
     .then(() => res.sendStatus(204))
@@ -59,9 +83,11 @@ module.exports = controller({
   update,
   destroy
 }, { before: [
-  { method: multerUpload.single('image[file]'), only: ['create']},
-  // { method: setUser, only: ['index', 'show'] },
-  // { method: authenticate, except: ['index', 'show'] },
+  { method: multerUpload.single('image[file]'), only: ['create'] },
+  // sets users/owner
+  { method: setUser, only: ['index', 'show'] },
+  // authenticates token
+  { method: authenticate, except: ['index', 'show'] },
   { method: setModel(Upload), only: ['show'] },
   { method: setModel(Upload, { forUser: true }), only: ['update', 'destroy'] }
 ] })
