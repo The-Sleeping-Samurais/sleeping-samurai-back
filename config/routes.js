@@ -14,6 +14,9 @@ module.exports = require('lib/wiring/routes')
 .resources('uploads')
 
 // users of the app have special requirements
+//creates route to find uploads by user id
+.get('/useruploads/:id', 'uploads#useruploads')
+
 .post('/sign-up', 'users#signup')
 .post('/sign-in', 'users#signin')
 .delete('/sign-out/:id', 'users#signout')

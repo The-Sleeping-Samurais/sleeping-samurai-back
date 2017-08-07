@@ -36,6 +36,16 @@ const index = (req, res, next) => {
     .catch(next)
 }
 
+const useruploads = (req, res, next) => {
+  //this will find by _owner
+  Upload.find({_owner: req.user._id})
+    .then(uploads => res.json({
+      uploads: uploads.map((e) =>
+      // turn each upload object into JSON, with virtuals and owner
+        e.toJSON({ virtuals: true, user: req.user }))
+    }))
+    .catch(next)
+}
 // function to show one upload
 const show = (req, res) => {
   res.json({
@@ -81,13 +91,14 @@ module.exports = controller({
   show,
   create,
   update,
-  destroy
+  destroy,
+  useruploads
 }, { before: [
   { method: multerUpload.single('image[file]'), only: ['create'] },
   // sets users/owner
-  { method: setUser, only: ['index', 'show'] },
+  { method: setUser, only: ['index', 'show', 'useruploads'] },
   // authenticates token
-  { method: authenticate, except: ['index', 'show'] },
+  { method: authenticate, except: ['index', 'show', 'useruploads'] },
   { method: setModel(Upload), only: ['show'] },
   { method: setModel(Upload, { forUser: true }), only: ['update', 'destroy'] }
 ] })
