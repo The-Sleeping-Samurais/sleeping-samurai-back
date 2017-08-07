@@ -95,7 +95,7 @@ module.exports = controller({
   useruploads
 }, { before: [
   { method: multerUpload.single('image[file]'), only: ['create'] },
-  // sets users/owner
+  // sets users/owner....adds useruploads route to setUser
   { method: setUser, only: ['index', 'show', 'useruploads'] },
   // authenticates token
   { method: authenticate, except: ['index', 'show', 'useruploads'] },
