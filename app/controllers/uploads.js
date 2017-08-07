@@ -37,7 +37,7 @@ const index = (req, res, next) => {
 }
 
 const useruploads = (req, res, next) => {
-  //this will find by _owner
+  // this will find by _owner
   Upload.find({_owner: req.user._id})
     .then(uploads => res.json({
       uploads: uploads.map((e) =>
@@ -55,7 +55,6 @@ const show = (req, res) => {
 
 // creates a new JSON object out of a file we uploaded to AWS
 const create = (req, res, next) => {
-
 //  the values that an upload MUST have
   const upload = {
     file: req.file.path,
@@ -67,8 +66,8 @@ const create = (req, res, next) => {
       res.status(201)
       // sends response data of the upload back
         .json({
-          //adds vituals for user
-          upload: upload.toJSON({ virtuals: true, user: req.user})
+          // adds vituals for user
+          upload: upload.toJSON({ virtuals: true, user: req.user })
         }))
     .catch(next)
 }
