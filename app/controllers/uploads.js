@@ -58,8 +58,7 @@ const create = (req, res, next) => {
 //  the values that an upload MUST have
   const upload = {
     file: req.file.path,
-    name: req.body.file.name,
-    tag: req.body.file.tag
+    name: req.body.file.name
   }
   // calling the AWSUpload function to upload file... also stores in MongoDB
   AWSUpload(upload, req)
