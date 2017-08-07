@@ -7,6 +7,7 @@ const uploadSchema = new mongoose.Schema({
         type: String,
         required: true
       },
+      //added _owner to uploadSchema, which references user
       _owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -22,6 +23,8 @@ const uploadSchema = new mongoose.Schema({
       virtuals: true,
       transform: function(doc, ret, options) {
         const userId = (options.user && options.user._id) || false
+        //Makes it so you can only edit if you are logged in
+        //and the user who uploaded file
         ret.editable = userId && userId.equals(doc._owner)
         return ret
       }

@@ -57,6 +57,7 @@ const create = (req, res, next) => {
       res.status(201)
       // sends response data of the upload back
         .json({
+          //adds vituals for user
           upload: upload.toJSON({ virtuals: true, user: req.user})
         }))
     .catch(next)
