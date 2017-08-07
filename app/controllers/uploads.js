@@ -45,18 +45,20 @@ const show = (req, res) => {
 
 // creates a new JSON object out of a file we uploaded to AWS
 const create = (req, res, next) => {
-  // the values that an upload MUST have
+
+//  the values that an upload MUST have
   const upload = {
     file: req.file.path,
     name: req.body.image.title
   }
   // calling the AWSUpload function to upload file... also stores in MongoDB
-  AWSUpload(upload)
+  AWSUpload(upload, req)
     .then(upload =>
       res.status(201)
       // sends response data of the upload back
         .json({
-          upload: upload.toJSON()
+          //adds vituals for user
+          upload: upload.toJSON({ virtuals: true, user: req.user})
         }))
     .catch(next)
 }
