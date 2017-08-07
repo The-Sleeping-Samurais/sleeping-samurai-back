@@ -37,7 +37,7 @@ const index = (req, res, next) => {
 }
 
 const useruploads = (req, res, next) => {
-  //this will find by _owner
+  // this will find by _owner
   Upload.find({_owner: req.user._id})
     .then(uploads => res.json({
       uploads: uploads.map((e) =>
@@ -55,11 +55,10 @@ const show = (req, res) => {
 
 // creates a new JSON object out of a file we uploaded to AWS
 const create = (req, res, next) => {
-
 //  the values that an upload MUST have
   const upload = {
     file: req.file.path,
-    name: req.body.image.title
+    name: req.body.file.name
   }
   // calling the AWSUpload function to upload file... also stores in MongoDB
   AWSUpload(upload, req)
@@ -67,8 +66,8 @@ const create = (req, res, next) => {
       res.status(201)
       // sends response data of the upload back
         .json({
-          //adds vituals for user
-          upload: upload.toJSON({ virtuals: true, user: req.user})
+          // adds vituals for user
+          upload: upload.toJSON({ virtuals: true, user: req.user })
         }))
     .catch(next)
 }
@@ -76,7 +75,19 @@ const create = (req, res, next) => {
 // Updates JSON object
 const update = (req, res, next) => {
   delete req.body._owner  // disallow owner reassignment.
-  req.upload.update(req.body.upload)
+  // gets specific about what is being set within the req.body.upload and does not change the _id
+  // Upload.update({_id: req.body.upload_id}, { $set: {name: req.body.name, description: req.body.description, tag: req.body.tag} }, {new: true})
+  Upload.update({_id: req.body.upload_id}, { $set: {name: req.body.name, description: req.body.description, tag: req.body.tag} }, (err, upload) => {
+      if (err) {
+        console.log(`Error in setting upload: ${err}`)
+        res.send(err)
+      } else {
+        console.log('Success updating upload', upload)
+        res.send(upload)
+        return upload
+      }
+    })
+    .then((upload) => upload.save())
     .then(() => res.sendStatus(204))
     .catch(next)
 }
@@ -96,7 +107,7 @@ module.exports = controller({
   destroy,
   useruploads
 }, { before: [
-  { method: multerUpload.single('image[file]'), only: ['create'] },
+  { method: multerUpload.single('file[load]'), only: ['create'] },
   // sets users/owner....adds useruploads route to setUser
   { method: setUser, only: ['index', 'show', 'useruploads'] },
   // authenticates token
