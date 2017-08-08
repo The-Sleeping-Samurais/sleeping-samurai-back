@@ -74,20 +74,21 @@ const create = (req, res, next) => {
 
 // Updates JSON object
 const update = (req, res, next) => {
+  // console.log(req.body)
   delete req.body._owner  // disallow owner reassignment.
   // gets specific about what is being set within the req.body.upload and does not change the _id
   // Upload.update({_id: req.body.upload_id}, { $set: {name: req.body.name, description: req.body.description, tag: req.body.tag} }, {new: true})
-  Upload.update({_id: req.body.upload_id}, { $set: {name: req.body.name, description: req.body.description, tag: req.body.tag} }, (err, upload) => {
-      if (err) {
-        console.log(`Error in setting upload: ${err}`)
-        res.send(err)
-      } else {
-        console.log('Success updating upload', upload)
-        res.send(upload)
-        return upload
-      }
-    })
-    .then((upload) => upload.save())
+  // Upload.update({_id: req.body.upload_id}, { $set: {name: req.body.name, description: req.body.description, tag: req.body.tag} }, (err, upload) => {
+  //   if (err) {
+  //     console.log(`Error in setting upload: ${err}`)
+  //     res.send(err)
+  //   } else {
+  //     console.log('Success updating upload', upload)
+  //     return upload
+  //   }
+  // })
+    // .then((upload) => upload.save())
+  req.upload.update(req.body.upload)
     .then(() => res.sendStatus(204))
     .catch(next)
 }
