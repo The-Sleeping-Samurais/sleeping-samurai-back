@@ -56,9 +56,12 @@ const show = (req, res) => {
 // creates a new JSON object out of a file we uploaded to AWS
 const create = (req, res, next) => {
 //  the values that an upload MUST have
+  console.log(req.file.path)
   const upload = {
     file: req.file.path,
-    name: req.body.file.name
+    name: req.body.file.name,
+    ext: req.file.originalname,
+    mimetype: req.file.mimetype
   }
   // calling the AWSUpload function to upload file... also stores in MongoDB
   AWSUpload(upload, req)
@@ -108,7 +111,7 @@ module.exports = controller({
   destroy,
   useruploads
 }, { before: [
-  { method: multerUpload.single('file[load]'), only: ['create'] },
+  { method: multerUpload.single('file[load]') },
   // sets users/owner....adds useruploads route to setUser
   { method: setUser, only: ['index', 'show', 'useruploads'] },
   // authenticates token
