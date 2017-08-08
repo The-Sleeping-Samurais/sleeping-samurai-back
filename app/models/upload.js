@@ -28,7 +28,7 @@ const uploadSchema = new mongoose.Schema({
   },
   size: {
     type: Number,
-    required: true
+    required: false
   }
 }, {
   timestamps: true,

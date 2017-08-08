@@ -56,6 +56,7 @@ const show = (req, res) => {
 // creates a new JSON object out of a file we uploaded to AWS
 const create = (req, res, next) => {
 //  the values that an upload MUST have
+  console.log(req.file.size)
   const upload = {
     file: req.file.path,
     name: req.body.file.name,
@@ -63,7 +64,7 @@ const create = (req, res, next) => {
     // pass in mimetype so you can use it in AWSUpload
     // this will return a url that hosts the file
     mimetype: req.file.mimetype,
-    size: req.file.size
+    size: (req.file.size / 1048576).toFixed(2)
   }
   // calling the AWSUpload function to upload file... also stores in MongoDB
   AWSUpload(upload, req)
