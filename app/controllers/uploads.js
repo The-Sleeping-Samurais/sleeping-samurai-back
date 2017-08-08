@@ -62,7 +62,8 @@ const create = (req, res, next) => {
     ext: req.file.originalname,
     // pass in mimetype so you can use it in AWSUpload
     // this will return a url that hosts the file
-    mimetype: req.file.mimetype
+    mimetype: req.file.mimetype,
+    size: req.file.size
   }
   // calling the AWSUpload function to upload file... also stores in MongoDB
   AWSUpload(upload, req)
