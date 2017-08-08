@@ -25,6 +25,10 @@ const uploadSchema = new mongoose.Schema({
   description: {
     type: String,
     required: false
+  },
+  size: {
+    type: Number,
+    required: false
   }
 }, {
   timestamps: true,
